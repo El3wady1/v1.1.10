@@ -772,6 +772,8 @@ class _RezobodyviewState extends State<Rezobodyview> {
       context: context,
       builder: (BuildContext context) {
         return Container(
+          height: 200
+        ,
           padding: EdgeInsets.all(16),
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -1312,8 +1314,9 @@ class _RezobodyviewState extends State<Rezobodyview> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 1, vertical: 8),
+                              padding: EdgeInsets.symmetric(horizontal: 1, vertical: 4),
                               child: Text(
+                                
                                 product['name'],
                                 style: GoogleFonts.cairo(
                                   fontSize: 12,
@@ -1337,15 +1340,15 @@ class _RezobodyviewState extends State<Rezobodyview> {
                                       children: [
                                         // زر الناقص
                                         Container(
-                                          width: 24,
-                                          height: 24,
+                                          width: 26,
+                                          height: 26,
                                           decoration: BoxDecoration(
                                             color: quantity > 0 ? Colors.red : Colors.grey,
                                             borderRadius: BorderRadius.circular(4),
                                           ),
                                           child: IconButton(
                                             padding: EdgeInsets.zero,
-                                            icon: Icon(Icons.remove, size: 12, color: Colors.white),
+                                            icon: Icon(Icons.remove, size: 14, color: Colors.white),
                                             onPressed: () => _decreaseQuantity(productId),
                                           ),
                                         ),
@@ -1375,15 +1378,15 @@ class _RezobodyviewState extends State<Rezobodyview> {
                                         
                                         // زر الزائد
                                         Container(
-                                          width: 24,
-                                          height: 24,
+                                          width: 26,
+                                          height: 26,
                                           decoration: BoxDecoration(
                                             color: primaryColor,
                                             borderRadius: BorderRadius.circular(4),
                                           ),
                                           child: IconButton(
                                             padding: EdgeInsets.zero,
-                                            icon: Icon(Icons.add, size: 12, color: Colors.white),
+                                            icon: Icon(Icons.add, size: 14, color: Colors.white),
                                             onPressed: () => _increaseQuantity(productId),
                                           ),
                                         ),
@@ -1393,7 +1396,7 @@ class _RezobodyviewState extends State<Rezobodyview> {
                                     
                                     // زر الإضافة
                                     Container(
-                                      height: 24,
+                                      height: 27,
                                       margin: EdgeInsets.symmetric(horizontal: 4),
                                       child: ElevatedButton(
                                         style: ElevatedButton.styleFrom(
@@ -1410,7 +1413,7 @@ class _RezobodyviewState extends State<Rezobodyview> {
                                         child: Text(
                                           "اضافة".tr(),
                                           style: GoogleFonts.cairo(
-                                            fontSize: 10,
+                                            fontSize: 14,
                                             fontWeight: FontWeight.bold,
                                           ),
                                         ),
