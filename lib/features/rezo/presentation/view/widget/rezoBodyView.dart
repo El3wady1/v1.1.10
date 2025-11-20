@@ -414,12 +414,6 @@ class _RezobodyviewState extends State<Rezobodyview> {
       });
     }
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text("تم إضافة المنتج بنجاح".tr()+ " - " +product['name']),
-        backgroundColor: primaryColor,
-      ),
-    );
   }
 
   void _removeProductFromSelection(int index) {
