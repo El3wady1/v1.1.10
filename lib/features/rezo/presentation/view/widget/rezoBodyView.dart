@@ -1194,11 +1194,11 @@ class _RezobodyviewState extends State<Rezobodyview> {
       return Column(
         children: [
           // قسم عرض المنتجات في Grid
-          Expanded(
-            flex: 3,
-            child: _buildProductsGridSection(),
-          ),
-          SizedBox(height: 16),
+          Container(
+                    height: MediaQuery.of(context).size.height*0.37,
+
+            child: _buildProductsGridSection()),
+          SizedBox(height: 5),
           // قسم المنتجات المختارة
           _buildSelectedProductsSection(),
         ],
@@ -1453,7 +1453,7 @@ class _RezobodyviewState extends State<Rezobodyview> {
     
     if (selectedProducts.isEmpty) {
       return Container(
-        height: 80,
+        height: 90,
         child: Card(
           elevation: 2,
           color: backgroundColor,
@@ -1483,7 +1483,7 @@ class _RezobodyviewState extends State<Rezobodyview> {
 
     return Container(
       constraints: BoxConstraints(
-        maxHeight: 408,
+        maxHeight: MediaQuery.of(context).size.height*0.4,
         minHeight: 100,
       ),
       child: Column(
@@ -1725,37 +1725,10 @@ class _RezobodyviewState extends State<Rezobodyview> {
                               ),
                             ],
                           ),
-                          SizedBox(height: 12),
                           
-                          // 🔥 تحذير الصورة الإجبارية
-                          if (_selectedImage == null)
-                            Container(
-                              width: double.infinity,
-                              padding: EdgeInsets.all(8),
-                              decoration: BoxDecoration(
-                                color: Colors.red.withOpacity(0.1),
-                                borderRadius: BorderRadius.circular(6),
-                                border: Border.all(color: Colors.red),
-                              ),
-                              child: Row(
-                                children: [
-                                  Icon(Icons.warning, color: Colors.red, size: 16),
-                                  SizedBox(width: 8),
-                                  Expanded(
-                                    child: Text(
-                                      'الصورة إجبارية'.tr(),
-                                      style: GoogleFonts.cairo(
-                                        fontSize: 12,
-                                        color: Colors.red,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
                           
-                          SizedBox(height: 12),
+                          
+                          SizedBox(height: 6),
                           
                           // صف الأزرار
                           Row(
@@ -1765,13 +1738,13 @@ class _RezobodyviewState extends State<Rezobodyview> {
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: _selectedImage != null ? secondaryColor : Colors.red,
                                   foregroundColor: Colors.white,
-                                  minimumSize: Size(45, 45),
+                                  minimumSize: Size(40, 40),
                                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
                                 ),
                                 onPressed: _showImageOptions,
                                 child: Icon(
                                   _selectedImage != null ? Icons.check : Icons.camera_alt,
-                                  size: 20,
+                                  size: 18,
                                 ),
                               ),
                               SizedBox(width: 5),
@@ -1782,13 +1755,13 @@ class _RezobodyviewState extends State<Rezobodyview> {
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: primaryColor,
                                     foregroundColor: Colors.white,
-                                    minimumSize: Size(double.infinity, 45),
+                                    minimumSize: Size(double.infinity, 40),
                                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
                                   ),
                                   onPressed: _saveAllDamages,
                                   child: isLoading
                                       ? SizedBox(
-                                          height: 20,
+                                          height: 15,
                                           width: 20,
                                           child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
                                         )
