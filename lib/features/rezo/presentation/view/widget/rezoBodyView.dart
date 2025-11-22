@@ -138,9 +138,8 @@ class _RezobodyviewState extends State<Rezobodyview> {
           if (mounted) {
             setState(() {
               deliveryApps = List<Map<String, dynamic>>.from(data);
-              if (deliveryApps.isNotEmpty) {
-                selectedDeliveryApp = deliveryApps.first['_id'];
-              }
+              // 🔥 لا نختار أي تطبيق تلقائياً - يبقى فارغاً
+              // selectedDeliveryApp = deliveryApps.first['_id']; // ❌ محذوف
               isLoadingDeliveryApps = false;
             });
           }
@@ -334,7 +333,7 @@ class _RezobodyviewState extends State<Rezobodyview> {
     }
   }
 
-  void _onDeliveryAppSelected(String deliveryAppId) {
+  void _onDeliveryAppSelected(String? deliveryAppId) {
     if (mounted) {
       setState(() {
         selectedDeliveryApp = deliveryAppId;
@@ -380,6 +379,17 @@ class _RezobodyviewState extends State<Rezobodyview> {
       return;
     }
 
+    // 🔥 التحقق من اختيار تطبيق التوصيل (إجباري)
+    if (selectedDeliveryApp == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('الرجاء اختيار تطبيق التوصيل أولاً'.tr()),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
     Map<String, dynamic>? unitData = _findProductUnit(product['_id']);
     String finalUnitId = unitData?['id'];
     String finalUnitName = unitData?['name'] ?? 'وحدة'.tr();
@@ -413,7 +423,6 @@ class _RezobodyviewState extends State<Rezobodyview> {
         productQuantities[product['_id']] = 0;
       });
     }
-
   }
 
   void _removeProductFromSelection(int index) {
@@ -488,6 +497,18 @@ class _RezobodyviewState extends State<Rezobodyview> {
       return;
     }
 
+    // 🔥 التحقق من اختيار تطبيق التوصيل (إجباري)
+    if (selectedDeliveryApp == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('الرجاء اختيار تطبيق التوصيل أولاً'.tr()),
+          backgroundColor: Colors.red,
+          duration: Duration(seconds: 5),
+        ),
+      );
+      return;
+    }
+
     try {
       var token;
       await Localls.getToken().then((v) => token = v);
@@ -516,7 +537,7 @@ class _RezobodyviewState extends State<Rezobodyview> {
       print(items);
       // 🔥 إضافة الحقول بشكل صحيح
       request.fields['branch'] = selectedBranch!;
-      request.fields['deliveryApp'] = selectedDeliveryApp!;
+      request.fields['deliveryApp'] = selectedDeliveryApp!; // 🔥 إجباري
       request.fields['item'] = jsonEncode(items);  // درست على السيرفر
 
       // 🔥 إضافة صورة الفاتورة (إجباري)
@@ -551,6 +572,8 @@ class _RezobodyviewState extends State<Rezobodyview> {
           setState(() {
             selectedProducts = [];
             _selectedImage = null;
+            // 🔥 إعادة تعيين تطبيق التوصيل ليصبح فارغاً بعد الحفظ
+            selectedDeliveryApp = null;
             for (var product in allProducts) {
               productQuantities[product['_id']] = 0;
             }
@@ -613,6 +636,18 @@ class _RezobodyviewState extends State<Rezobodyview> {
       return;
     }
 
+    // 🔥 التحقق من اختيار تطبيق التوصيل (إجباري)
+    if (selectedDeliveryApp == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('الرجاء اختيار تطبيق التوصيل أولاً'.tr()),
+          backgroundColor: Colors.red,
+          duration: Duration(seconds: 5),
+        ),
+      );
+      return;
+    }
+
     try {
       var token;
       await Localls.getToken().then((v) => token = v);
@@ -628,7 +663,7 @@ class _RezobodyviewState extends State<Rezobodyview> {
       Map<String, dynamic> requestBody = {
         "item": items,
         "branch": selectedBranch,
-        "deliveryApp": selectedDeliveryApp,
+        "deliveryApp": selectedDeliveryApp, // 🔥 إجباري
       };
 
       print('=== طلب JSON المرسل ==='.tr());
@@ -658,6 +693,8 @@ class _RezobodyviewState extends State<Rezobodyview> {
           setState(() {
             selectedProducts = [];
             _selectedImage = null;
+            // 🔥 إعادة تعيين تطبيق التوصيل ليصبح فارغاً بعد الحفظ
+            selectedDeliveryApp = null;
             for (var product in allProducts) {
               productQuantities[product['_id']] = 0;
             }
@@ -767,13 +804,13 @@ class _RezobodyviewState extends State<Rezobodyview> {
       );
     }
   }
+
   void _showImageOptions() {
     showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
         return Container(
-          height: 200
-        ,
+          height: 200,
           padding: EdgeInsets.all(16),
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -822,6 +859,7 @@ class _RezobodyviewState extends State<Rezobodyview> {
       return;
     }
 
+    // 🔥 التحقق من اختيار تطبيق التوصيل (إجباري)
     if (selectedDeliveryApp == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -1093,34 +1131,55 @@ class _RezobodyviewState extends State<Rezobodyview> {
                 isExpanded: true,
                 value: selectedDeliveryApp,
                 decoration: InputDecoration(
-                  labelText: "تطبيق التوصيل".tr(),
+                  labelText: "تطبيق التوصيل *".tr(), // 🔥 إضافة علامة إجبارية
                   labelStyle: GoogleFonts.cairo(
                     fontWeight: FontWeight.w900,
-                    fontSize: MediaQuery.of(context).size.width*0.028,
+                    fontSize: MediaQuery.of(context).size.width * 0.028,
                     color: primaryColor,
                   ),
                   border: InputBorder.none,
                   contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                   prefixIcon: Icon(Icons.delivery_dining, color: primaryColor, size: 20),
                 ),
-                items: deliveryApps.map((app) {
-                  return DropdownMenuItem<String>(
-                    value: app['_id'],
+                items: [
+                  // 🔥 إضافة عنصر فارغ في البداية
+                  DropdownMenuItem<String>(
+                    value: null,
                     child: Text(
-                      app['name'] ?? 'غير معروف'.tr(),
+                      'اختر تطبيق التوصيل'.tr(),
                       style: GoogleFonts.cairo(
                         fontWeight: FontWeight.bold,
                         fontSize: 14,
-                        color: primaryColor,
+                        color: Colors.grey,
                       ),
-                      overflow: TextOverflow.ellipsis,
                     ),
-                  );
-                }).toList(),
+                  ),
+                  ...deliveryApps.map((app) {
+                    return DropdownMenuItem<String>(
+                      value: app['_id'],
+                      child: Text(
+                        app['name'] ?? 'غير معروف'.tr(),
+                        style: GoogleFonts.cairo(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
+                          color: primaryColor,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    );
+                  }).toList(),
+                ],
                 onChanged: (newValue) {
-                  _onDeliveryAppSelected(newValue!);
+                  _onDeliveryAppSelected(newValue);
                 },
                 dropdownColor: backgroundColor,
+                // 🔥 إضافة تحقق من القيمة المختارة
+                validator: (value) {
+                  if (value == null) {
+                    return 'هذا الحقل مطلوب'.tr();
+                  }
+                  return null;
+                },
               ),
             ),
           );
@@ -1191,9 +1250,9 @@ class _RezobodyviewState extends State<Rezobodyview> {
         children: [
           // قسم عرض المنتجات في Grid
           Container(
-                    height: MediaQuery.of(context).size.height*0.37,
-
-            child: _buildProductsGridSection()),
+            height: MediaQuery.of(context).size.height * 0.37,
+            child: _buildProductsGridSection(),
+          ),
           SizedBox(height: 5),
           // قسم المنتجات المختارة
           _buildSelectedProductsSection(),
@@ -1241,7 +1300,7 @@ class _RezobodyviewState extends State<Rezobodyview> {
             Icon(Icons.inventory_2, color: primaryColor, size: 20),
             SizedBox(width: 8),
             Text(
-              "المنتجات".tr()+ " "+"(${allProducts.length})",
+              "المنتجات".tr() + " " + "(${allProducts.length})",
               style: GoogleFonts.cairo(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
@@ -1316,7 +1375,6 @@ class _RezobodyviewState extends State<Rezobodyview> {
                             Padding(
                               padding: EdgeInsets.symmetric(horizontal: 1, vertical: 4),
                               child: Text(
-                                
                                 product['name'],
                                 style: GoogleFonts.cairo(
                                   fontSize: 12,
@@ -1446,7 +1504,7 @@ class _RezobodyviewState extends State<Rezobodyview> {
 
   Widget _buildSelectedProductsSection() {
     double totalAmount = _calculateTotal();
-    int totalQty =_calculateTotalQty();
+    int totalQty = _calculateTotalQty();
     
     if (selectedProducts.isEmpty) {
       return Container(
@@ -1480,7 +1538,7 @@ class _RezobodyviewState extends State<Rezobodyview> {
 
     return Container(
       constraints: BoxConstraints(
-        maxHeight: MediaQuery.of(context).size.height*0.4,
+        maxHeight: MediaQuery.of(context).size.height * 0.4,
         minHeight: 100,
       ),
       child: Column(
@@ -1639,6 +1697,7 @@ class _RezobodyviewState extends State<Rezobodyview> {
                                         "${product['selectedQuantity']}",
                                         style: GoogleFonts.cairo(
                                           fontSize: 11,
+                                          fontWeight: FontWeight.w900,
                                           color: Colors.grey[700],
                                         ),
                                         textAlign: TextAlign.center,
@@ -1656,8 +1715,8 @@ class _RezobodyviewState extends State<Rezobodyview> {
                                         : "-",
                                       style: GoogleFonts.cairo(
                                         fontSize: 11,
-                                        color: secondaryColor,
-                                        fontWeight: FontWeight.bold,
+                                        color: primaryColor,
+                                        fontWeight: FontWeight.w900,
                                       ),
                                       textAlign: TextAlign.center,
                                     ),
@@ -1698,12 +1757,11 @@ class _RezobodyviewState extends State<Rezobodyview> {
                           // صف الإجمالي
                           Row(
                             children: [
-                              
                               Text(
                                 'الإجمالي:'.tr(),
                                 style: GoogleFonts.cairo(
                                   fontSize: 13,
-                                  fontWeight: FontWeight.bold,
+                                  fontWeight: FontWeight.w900,
                                   color: primaryColor,
                                 ),
                               ),
@@ -1714,16 +1772,14 @@ class _RezobodyviewState extends State<Rezobodyview> {
                                 '       ${totalQty}                 ${totalAmount.toStringAsFixed(0)} ',
                                 style: GoogleFonts.cairo(
                                   fontSize: 12,
-                                  fontWeight: FontWeight.bold,
-                                  color: secondaryColor,
+                                  fontWeight: FontWeight.w900,
+                                  color: primaryColor,
                                 ),
                               ), Spacer(
                                 flex: 2,
                               ),
                             ],
                           ),
-                          
-                          
                           
                           SizedBox(height: 6),
                           
@@ -1768,7 +1824,7 @@ class _RezobodyviewState extends State<Rezobodyview> {
                                             Icon(Icons.save, color: Colors.white, size: 18),
                                             SizedBox(width: 6),
                                             Text(
-                                              "حفظ".tr()+"(${selectedProducts.length})",
+                                              "حفظ".tr() + "(${selectedProducts.length})",
                                               style: GoogleFonts.cairo(
                                                 fontSize: 14,
                                                 color: Colors.white,
